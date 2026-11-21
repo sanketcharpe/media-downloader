@@ -1,0 +1,61 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.mediadl.app'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'com.mediadl.app'
+        minSdk 29
+        targetSdk 34
+        versionCode 1
+        versionName '1.0'
+    }
+
+    signingConfigs {
+        debug {
+            // Fixed key so every new build installs over the previous one
+            storeFile file('debug.keystore')
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+        }
+    }
+
+    buildTypes {
+        debug {
+            signingConfig signingConfigs.debug
+        }
+    }
+
+    // One APK per phone type: arm64-v8a (almost all phones since 2017) and armeabi-v7a (older)
+    splits {
+        abi {
+            enable true
+            reset()
+            include 'arm64-v8a', 'armeabi-v7a'
+            universalApk false
+        }
+    }
+
+    packaging {
+        jniLibs {
+            // yt-dlp's Python and ffmpeg must be unpacked on the phone to run
+            useLegacyPackaging true
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    def ytdl = '0.17.3'
+    implementation "io.github.junkfood02.youtubedl-android:library:$ytdl"
+    implementation "io.github.junkfood02.youtubedl-android:ffmpeg:$ytdl"
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.9.24'
+}
